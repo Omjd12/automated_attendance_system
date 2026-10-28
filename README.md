@@ -1,4 +1,4 @@
-# silver-spoon
+# automated_attendance_system
 ESP32 firmware to support an automated system of taking employee attendance. Checks for BLE beacons from employees' smartphones, associates them with the registered list, and generates attendance events through backend API to record attendance in Firebase.
 # 📡 IoT Layer — Attendance System
 
