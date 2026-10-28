@@ -1,10 +1,8 @@
 # silver-spoon
-ESP32 firmware for an automated employee attendance system. Scans for BLE beacons on employee phones, matches them against a registered roster, and posts check-in events to the backend API which logs attendance in Firebase.
-
+ESP32 firmware to support an automated system of taking employee attendance. Checks for BLE beacons from employees' smartphones, associates them with the registered list, and generates attendance events through backend API to record attendance in Firebase.
 # 📡 IoT Layer — Attendance System
 
-ESP32-based proximity detection layer for the automated employee attendance system. Scans for BLE beacons carried by employees and posts check-in events to the backend API.
-
+Proximity sensing layer using ESP32 for the automatic employee attendance system. Detects BLE beacon signals from employees and logs the check-in events to the backend API.
 ---
 
 ## How It Works
@@ -15,11 +13,10 @@ Employee's Phone          ESP32 Device             Backend Server
   "EMP001-BEACON"         detects beacon            writes to Firebase
 ```
 
-1. Each employee runs a BLE advertising app on their phone broadcasting a unique name (e.g. `EMP001-BEACON`)
-2. The ESP32 continuously scans for registered beacon names in range
-3. On a match, the ESP32 sends a POST request to the backend with the `employeeId`
-4. The backend marks attendance in Firebase — duplicate check-ins on the same day are automatically rejected
-
+1. Every employee uses the BLE Advertising application running on his/her phone to broadcast the unique employee ID (for example, `EMP001-BEACON`).
+2. The ESP32 is constantly scanning for the registered beacon ID within the range.
+3. If there is a match, the ESP32 sends a `POST` request to the back-end containing the `employeeId`.
+4. The back-end checks attendance in Firebase and rejects multiple check-ins during the same day.
 ---
 
 ## File Structure
@@ -68,12 +65,11 @@ scanner.addEmployee("EMP003", "EMP003-BEACON");
 
 ## Employee Phone Setup
 
-The phone acts as a BLE peripheral. Since Android does not advertise BLE passively, employees need a BLE advertising app:
+The phone serves as a BLE peripheral device. As Android does not perform BLE advertisements in passive mode, there is a requirement for a BLE advertisement application:
 
-- **App:** [BLE Peripheral Simulator](https://play.google.com/store/apps/details?id=io.github.webbluetoothcg.bletestperipheral) *(free, Play Store)*
-- Open app → **Add Advertiser** → set Device Name to `EMP001-BEACON` → **Start**
-- The app must be running and advertising for detection to work
-
+- **App**: [BLE Peripheral Simulator](https://play.google.com/store/apps/details?id=io.github.webbluetoothcg.bletestperipheral) *(free, Google Play Store)*
+- Launch app → **Add Advertiser** → set Device Name to `EMP001-BEACON` → **Start** 
+- Advertisement is required in order to detect the device
 ---
 
 ## API Contract
@@ -143,6 +139,6 @@ Install via Arduino Library Manager:
 
 ## Notes
 
-- BLE scan interval is set to `30000 ms` (30 seconds) by default. Adjust `SCAN_INTERVAL` in `attendance.ino` to suit your environment
-- The ESP32 will hard-stop (`while(1)`) if WiFi fails on boot — this is intentional to avoid silent failures
-- The backend prevents duplicate attendance records for the same employee on the same day; the ESP32 does not need to track this itself
+- BLE scan interval is initially set to `30000 ms`. You can change it as per your surroundings by modifying the value of `SCAN_INTERVAL` in `attendance.ino`
+- The ESP32 will be hard stopped (`while(1)`) in case of WiFi failure upon initialization; this is purposeful
+- Backend takes care of the fact that same employee does not record duplicate attendances on the same day; ESP32 doesn’t have to deal with this
